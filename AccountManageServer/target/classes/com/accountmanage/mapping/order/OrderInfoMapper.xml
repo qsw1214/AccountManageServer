@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.order.IOrderInfoDAO" >
+	
+	<resultMap id="OrderInfoResultMap" type="com.accountmanage.pojo.order.OrderInfo" >
+	    <id column="ordersn" property="ordersn" jdbcType="VARCHAR" />
+    	<result column="primeprice" property="primeprice" jdbcType="DECIMAL" />
+    	<result column="sellprice" property="sellprice" jdbcType="DECIMAL" />
+    	<result column="successprice" property="successprice" jdbcType="DECIMAL" />
+    	<result column="deductamt" property="deductamt" jdbcType="DECIMAL" />
+    	<result column="firstorderamt" property="firstorderamt" jdbcType="DECIMAL" />
+    	<result column="couponamt" property="couponamt" jdbcType="DECIMAL" />
+   		<result column="deliveryfee" property="deliveryfee" jdbcType="DECIMAL" />
+    	<result column="servicefee" property="servicefee" jdbcType="DECIMAL" />
+    	<result column="ordertime" property="ordertime" jdbcType="DATE" />
+    	<result column="paytime" property="paytime" jdbcType="DATE" />
+    	<result column="payflag" property="payflag" jdbcType="CHAR" />
+    	<result column="paytype" property="paytype" jdbcType="CHAR" />
+    	<result column="couponflag" property="couponflag" jdbcType="CHAR" />
+    	<result column="receivetelephone" property="receivetelephone" jdbcType="VARCHAR" />
+    	<result column="receivename" property="receivename" jdbcType="VARCHAR" />
+    	<result column="receiveaddress" property="receiveaddress" jdbcType="VARCHAR" />
+    	<result column="receivetime" property="receivetime" jdbcType="DATE" />
+    	<result column="deviceno" property="deviceno" jdbcType="VARCHAR" />
+    	<result column="remark" property="remark" jdbcType="VARCHAR" />
+   		<result column="orderstate" property="orderstate" jdbcType="CHAR" />
+   		<result column="isOnecent" property="isOnecent" jdbcType="CHAR" />
+   		<association column="userid" property="userInfo" resultMap="UserInfoResultMap"/>
+   		<association column="buserid" property="businessUser" resultMap="BusinessUserInfoResultMap"/>
+   	</resultMap>
+   	
+   	<resultMap id="UserInfoResultMap" type="com.accountmanage.pojo.bills.UserInfo" >
+  	    <id column="userId" property="userId" jdbcType="VARCHAR" />
+	    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  	</resultMap>
+   	
+   	<resultMap id="BusinessUserInfoResultMap" type="com.accountmanage.pojo.bills.BusinessUserInfo" >
+  	    <id column="buserId" property="buserId" jdbcType="VARCHAR" />
+	    <result column="buserName" property="buserName" jdbcType="VARCHAR" />
+  	</resultMap>
+   	
+   	
+   <sql id="Base_Column_List" >
+    o.ordersn, o.userid as userId, o.primeprice, o.sellprice, o.deductamt, o.firstorderamt, o.couponamt, 
+    o.deliveryfee, o.servicefee, o.ordertime, o.paytime, o.payflag, o.paytype, o.couponflag, o.receivetelephone, 
+    o.receivename, o.receiveaddress, o.receivetime, o.deviceno, o.remark, o.orderstate,o.successprice,o.isOnecent
+  </sql>
+   	
+    <select id="getPageOrderList" parameterType="java.util.Map" resultMap="OrderInfoResultMap">
+         SELECT 
+         	<include refid="Base_Column_List" />
+          FROM orderinfo o WHERE o.userid=#{userid} order by o.ordertime desc
+    </select>	
+    
+    <select id="getByOrderSn" parameterType="java.lang.String" resultMap="OrderInfoResultMap">
+         SELECT 
+         	<include refid="Base_Column_List" />,b.buserid as buserId 
+          FROM orderinfo o 
+          INNER JOIN BusinessUserInfo b on o.buserid = b.buserid
+          WHERE o.ordersn=#{0}
+    </select>	
+    
+    
+     <select id="getListByBaseOrderSn" parameterType="java.lang.String" resultMap="OrderInfoResultMap">
+         SELECT 
+         	<include refid="Base_Column_List" />,b.buserid as buserId 
+          FROM orderinfo o 
+          INNER JOIN BusinessUserInfo b on o.buserid = b.buserid
+          WHERE o.baseordersn=#{0}
+    </select>	
+    
+   	<update id="update" parameterType="com.accountmanage.pojo.order.OrderInfo">
+           UPDATE orderinfo SET 
+              <if test='couponflag != null and couponflag != ""'>
+                  couponflag=#{couponflag},
+              </if>
+              <if test='orderstate != null and orderstate != ""'>
+                  orderstate=#{orderstate},
+              </if>
+               <if test='paytime != null and paytime != ""'>
+                  paytime=#{paytime}
+              </if>
+              WHERE ordersn=#{ordersn}
+    
+    </update>
+   	
+</mapper>

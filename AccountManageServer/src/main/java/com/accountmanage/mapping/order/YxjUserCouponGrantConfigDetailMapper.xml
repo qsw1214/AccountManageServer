@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.order.IYxjUserCouponGrantConfigDetailDAO" >
+  <resultMap id="BaseResultMap" type="com.accountmanage.pojo.order.YxjUserCouponGrantConfigDetail" >
+    <id column="grantconfig_detail_id" property="grantconfigDetailId" jdbcType="VARCHAR" />
+    <result column="grant_quantity" property="grantQuantity" jdbcType="INTEGER" />
+    <association column="coupon_id" property="couponRuleInfo" resultMap="CouponRuleInfoResultMap"/>
+    <association column="grantconfig_id" property="grantconfig" resultMap="GrantConfigMap"/>
+  </resultMap>
+  
+  <resultMap id="GrantConfigMap" type="com.accountmanage.pojo.order.YxjUserCouponGrantConfig" >
+    <id column="coupon_config_id" property="configId" jdbcType="VARCHAR" />
+    <result column="config_flag" property="configFlag" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="edit_time" property="editTime" jdbcType="TIMESTAMP" />
+    <result column="config_remark" property="configRemark" jdbcType="VARCHAR" />
+    <result column="begintime" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="endtime" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="timeLength" property="timeLength" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="CouponRuleInfoResultMap" type="com.accountmanage.pojo.prod.CouponRuleInfo" >
+	    <id column="couponId" property="couponId" jdbcType="VARCHAR" />
+   		<result column="couponName" property="couponName" jdbcType="VARCHAR" />
+   		<result column="couponMoney" property="couponMoney" jdbcType="DECIMAL" />
+   		<result column="sinceMoney" property="sinceMoney" jdbcType="DECIMAL" />
+   		<result column="createTime" property="createTime" jdbcType="DATE" />
+   		<result column="r_beginTime" property="beginTime" jdbcType="DATE" />
+   		<result column="r_endTime" property="endTime" jdbcType="DATE" />
+   		<result column="state" property="state" jdbcType="CHAR" />
+   		<result column="prodTypeId" property="prodTypeId" jdbcType="VARCHAR" />
+   		<result column="couponDesc" property="couponDesc" jdbcType="VARCHAR" />
+   		<result column="adid" property="adid" jdbcType="VARCHAR" />
+   		<result column="r_timeLength" property="timeLength" jdbcType="INTEGER" />
+  	</resultMap>
+  	
+   <sql id="Base_Column_List" >
+       d.grantconfig_detail_id,d.grant_quantity,c.coupon_config_id,c.config_flag,c.config_remark,c.begintime,c.endtime,c.timeLength
+       ,r.couponId,r.couponName,r.couponMoney,r.sinceMoney,r.beginTime as r_beginTime,r.endTime as r_endTime,r.couponDesc,r.timeLength as r_timeLength
+   </sql>
+  
+  <select id="findListGrantConfigDetail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" />
+    from yxj_user_coupon_grantconfig_detail d 
+    inner join yxj_user_coupon_grantconfig c on d.grantconfig_id = c.coupon_config_id
+    inner join couponRuleInfo r on d.coupon_id = r.couponId 
+    where d.grantconfig_id=#{configId}
+  </select>
+</mapper>

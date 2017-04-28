@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+                        http://www.springframework.org/schema/mvc 
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd 
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 
+            			http://www.springframework.org/schema/aop 
+            			http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+    <!-- 引入配置文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:jdbc.properties" />
+	</bean>
+
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${driver}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+		初始化连接大小
+		<property name="initialSize" value="${initialSize}"></property>
+		连接池最大数量
+		<property name="maxActive" value="${maxActive}"></property>
+		连接池最大空闲
+		<property name="maxIdle" value="${maxIdle}"></property>
+		连接池最小空闲
+		<property name="minIdle" value="${minIdle}"></property>
+		获取连接最大等待时间
+		<property name="maxWait" value="${maxWait}"></property>
+		查询验证
+		<property name="validationQuery" value="${validationQuery}"></property>
+	</bean> -->
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass">
+			<value>${jdbc.driver}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="user">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${c3p0.minPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${c3p0.maxPoolSize}</value>
+		</property>
+		<property name="initialPoolSize">   
+	        <value>${c3p0.initialPoolSize}</value>   
+	    </property> 
+		<property name="maxIdleTime">
+			<value>${c3p0.maxIdleTime}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${c3p0.acquireIncrement}</value>
+		</property>
+	</bean>
+
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 如果需要的话，可以导入mybatis的配置映射文件 -->
+		<!--  <property name="configLocation" value="classpath:config/mybatis-config.xml" /> -->
+		 <property name="plugins">
+	       <array>
+	       	 <!-- 分页处理插件 -->
+		     <bean class="base.cn.web.mybatis.plugin.PageInterceptor" />
+	       </array>
+		 </property>
+		
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath:com/accountmanage/mapping/*/*.xml"></property>
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.accountmanage.dao.*" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean> 
+	
+	<!--基本事务定义，使用transactionManager作事务管理,默认get*,find*方法的事务为read-only-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="find*" read-only="true" />
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="select*" read-only="true" />
+            <tx:method name="validate*" read-only="true" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="delete*" propagation="REQUIRED" />
+            <tx:method name="save*" propagation="REQUIRED" />
+            <tx:method name="insert*" propagation="REQUIRED" />
+            <tx:method name="edit*" propagation="REQUIRED" />
+            <tx:method name="do*" propagation="REQUIRED"/>
+            <tx:method name="operate*" propagation="REQUIRES_NEW" rollback-for="Exception"/>
+            <tx:method name="giro*" propagation="REQUIRES_NEW" rollback-for="Exception"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <!-- 以tx标签配置拦截器  定义AOP  
+             第一个*代表所有的返回值类型   
+             第二个*代表所有的类  
+             第三个*代表类所有方法   
+             最后一个..代表所有的参数。  
+     --> 
+  
+    <aop:config>
+        <aop:pointcut id="interceptorPointCuts" expression="execution(* com.accountmanage.service.*.impl.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="interceptorPointCuts" />
+    </aop:config>
+	
+	<!-- 使用注解方式定义事务 有了这行@Transactional才能起作用--> 
+    <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+    
+    <!--
+    <bean id="myAspect1" class="com.mypackage.intercept.SiteAccessAspect"/>
+    -->
+    
+   <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
+	<context:component-scan base-package="com" use-default-filters="false">
+		<context:include-filter type="regex" expression=".*.service.*.*"/>
+    </context:component-scan>
+   
+     <!-- 自定义初始化Bean -->                     
+    <bean id="initializedApplicationContext" class="base.cn.web.InitializedApplicationContext"/>
+   
+
+	
+</beans>

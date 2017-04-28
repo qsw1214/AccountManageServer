@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.network.ISmsContentInfoDAO" >
+	
+	<resultMap id="OrderDetailResultMap" type="com.accountmanage.pojo.network.SmsContentInfo" >
+   		<id column="smsId" property="smsId" jdbcType="VARCHAR" />
+    	<result column="mobiles" property="mobiles" jdbcType="VARCHAR" />
+   		<result column="mobileNums" property="mobileNums" jdbcType="INTEGER" />
+   		<result column="content" property="content" jdbcType="VARCHAR" />
+    	<result column="contentType" property="contentType" jdbcType="VARCHAR" />
+    	<result column="notifyDatetime" property="notifyDatetime" jdbcType="DATE" />
+    	<result column="sendTimes" property="sendTimes" jdbcType="INTEGER" />
+    	<result column="sendDatetime" property="sendDatetime" jdbcType="DATE" />
+    	<result column="stateCode" property="stateCode" jdbcType="VARCHAR" />
+    	<result column="stateMsg" property="stateMsg" jdbcType="VARCHAR" />
+    	<result column="sendType" property="sendType" jdbcType="CHAR" />
+    	<result column="userName" property="userName" jdbcType="VARCHAR" />
+    	<result column="money" property="money" jdbcType="DECIMAL" />
+    	<result column="msgId" property="msgId" jdbcType="VARCHAR" />
+    	<result column="superName" property="superName" jdbcType="VARCHAR" />
+    	<result column="code" property="code" jdbcType="CHAR" />
+    	<result column="seq" property="seq" jdbcType="VARCHAR" />
+  	</resultMap>
+  		
+  	<sql id="Base_Column_List" >
+    	smsId,mobiles,contentType,sendType,msgId,code
+  	</sql>
+  	
+  	<select id="getBySmsId" parameterType="java.lang.String" resultType="com.accountmanage.pojo.network.SmsContentInfo">
+         SELECT 
+         	<include refid="Base_Column_List" />
+          FROM smsContentInfo WHERE smsId=#{smsId}
+    </select>
+    
+    <select id="getByMsgId" parameterType="java.lang.String" resultType="com.accountmanage.pojo.network.SmsContentInfo">
+         SELECT 
+         	<include refid="Base_Column_List" />
+          FROM smsContentInfo WHERE msgId=#{msgId}
+    </select>		
+   	
+  	<insert id="insertSmsContentInfo" parameterType="com.accountmanage.pojo.network.SmsContentInfo" >
+    insert into smsContentInfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    	smsId,
+    	mobiles,
+    	mobileNums,
+    	content,
+    	contentType,
+    	sendType,
+    	code,
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="superName != null" >
+        superName
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    	#{smsId},
+    	#{mobiles},
+    	#{mobileNums},
+    	#{content},
+    	#{contentType},
+    	#{sendType},
+    	#{code},
+      <if test="money != null" >
+        #{money},
+      </if>
+      <if test="userName != null" >
+        #{userName},
+      </if>
+      <if test="superName != null" >
+        #{superName}
+      </if>
+      
+    </trim>
+  	</insert>
+  	
+  	<update id="updateSmsContentInfo" parameterType="com.accountmanage.pojo.network.SmsContentInfo" >
+	    update smsContentInfo
+	    <set >
+	     	stateCode = #{stateCode},
+    		stateMsg = #{stateMsg},
+    		code = #{code},
+    	  <if test="sendDatetime != null" >
+	        sendDatetime = #{sendDatetime},
+	      </if>
+    	  <if test="sendTimes != null" >
+	        sendTimes = #{sendTimes},
+	      </if>
+	      <if test="notifyDatetime != null" >
+	        notifyDatetime = #{notifyDatetime},
+	      </if>
+	      <if test="seq != null" >
+	        seq = #{seq},
+	      </if>
+	      <if test="msgId != null" >
+	        msgId = #{msgId},
+	      </if>
+	      
+	    </set>
+	    where smsId=#{smsId} 
+  	</update>
+
+</mapper>

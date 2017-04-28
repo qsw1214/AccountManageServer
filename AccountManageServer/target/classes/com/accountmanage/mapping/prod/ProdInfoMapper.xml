@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.prod.IProdInfoDAO" >
+	
+	<resultMap id="ProdInfoResultMap" type="com.accountmanage.pojo.prod.ProdInfo" >
+	    <id column="prodid" property="prodid" jdbcType="VARCHAR" />
+    	<result column="prodname" property="prodname" jdbcType="VARCHAR" />
+    	<result column="sellPrice" property="sellPrice" jdbcType="DECIMAL" />
+    	<result column="valuePrice" property="valuePrice" jdbcType="DECIMAL" />
+   		<result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    	<result column="prodstock" property="prodstock" jdbcType="INTEGER" />
+    	<result column="imageUrl" property="imageUrl" jdbcType="VARCHAR" />
+    	<result column="weight" property="weight" jdbcType="VARCHAR" />
+    	<result column="cpackage" property="cpackage" jdbcType="VARCHAR" />
+    	<result column="remark" property="remark" jdbcType="VARCHAR" />
+    	<result column="preSellTag" property="preSellTag" jdbcType="VARCHAR" />
+    	<result column="prodUnit" property="prodUnit" jdbcType="VARCHAR" />
+    	<result column="preSellTime" property="preSellTime" jdbcType="VARCHAR" />
+    	<result column="ishome" property="ishome" jdbcType="CHAR" />
+    	<result column="isfreshman" property="isfreshman" jdbcType="CHAR" />
+    	<result column="freshmanprice" property="freshmanprice" jdbcType="DECIMAL" />
+    	<association property="detailInfo" column="detailInfo" resultMap="DetailInfoResultMap"></association>
+    	<association property="businessUser" column="businessUser" resultMap="BusinessUserResultMap"></association>
+    	
+  	</resultMap>
+  	 <resultMap id="DetailInfoResultMap" type="com.accountmanage.pojo.prod.ProdDetailInfo" >
+	       <id column="detailId" property="detailId" jdbcType="VARCHAR" />
+    	<result column="textString" property="textString" jdbcType="VARCHAR" />
+	 </resultMap>   
+	 
+	  <resultMap id="BusinessUserResultMap" type="com.accountmanage.pojo.bills.BusinessUserInfo" >
+	    <id column="buserId" property="buserId" jdbcType="VARCHAR" />
+	 </resultMap>   
+  	
+  	 <sql id="Base_Column_List" >
+          p.prodid, p.prodname, p.sellPrice, p.valuePrice, p.typeid, p.prodstock, p.imageUrl, p.weight, p.cpackage,
+           p.remark, p.preSellflag as preSellTag, p.prodUnit, p.preSellTime, p.detailid as detailInfo,P.buserId as businessUser
+	 </sql>
+	   	  
+	 <select id="getById" resultMap="ProdInfoResultMap" parameterType="java.lang.String">
+	  	SELECT
+			<include refid="Base_Column_List"></include>,pd.detailId,pd.textString
+		FROM ProdInfo p inner join ProdDetailInfo pd on p.detailId=pd.detailId
+		WHERE P.prodid=#{0}
+	 </select>
+  	
+   	<select id="getProdInfoList" resultMap="ProdInfoResultMap" parameterType="java.lang.String">
+	  	SELECT
+			<include refid="Base_Column_List"></include>
+		FROM
+			ProdInfo p 
+	 </select>
+	 
+	 <select id="getProdInfoListByType" resultMap="ProdInfoResultMap" parameterType="java.lang.String">
+	  	SELECT
+			<include refid="Base_Column_List"></include>
+		FROM
+			ProdInfo p where p.typeid=#{0}
+	 </select>
+	 
+	 <select id="getProdInfoListByParamsMap" resultMap="ProdInfoResultMap" parameterType="java.util.Map">
+	  	SELECT
+			<include refid="Base_Column_List"></include>
+		FROM
+			ProdInfo p
+			<if test="typeId != null and typeId!=''">
+			    where p.typeid=#{typeId}
+			</if>
+	 </select>
+	 
+</mapper>

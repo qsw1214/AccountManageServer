@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.bills.IBusinessUserBillsDAO" >
+	
+	<resultMap id="BusinessUserBillsResultMap" type="com.accountmanage.pojo.bills.BusinessUserBills" >
+	<id column="bbillid" property="bbillid" jdbcType="VARCHAR" />
+    <result column="buserid" property="buserid" jdbcType="VARCHAR" />
+    <result column="operatesn" property="operatesn" jdbcType="VARCHAR" />
+    <result column="operatetime" property="operatetime" jdbcType="DATE" />
+    <result column="amountbalance" property="amountbalance" jdbcType="DECIMAL" />
+    <result column="couponBalance" property="couponbalance" jdbcType="DECIMAL" />
+    <result column="operatemoney" property="operatemoney" jdbcType="DECIMAL" />
+    <result column="billsflag" property="billsflag" jdbcType="CHAR" />
+    <result column="operatedesc" property="operatedesc" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+  	<select id="validateRepeatBill"  resultType="java.lang.String">
+         SELECT 
+         	bbillid
+          FROM businessUserBills WHERE buserid=#{0} and operatesn = #{1} and billsflag = #{2}
+    </select>
+  	
+  	<insert id="insertBusinessUserBills" parameterType="com.accountmanage.pojo.bills.BusinessUserBills" >
+    insert into businessUserBills
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    	bbillid,
+    	buserid,
+    	operatesn,
+    	operatetime,
+    	operatemoney,
+    	billsflag,
+    	operatedesc,
+    	amountbalance,
+    	couponBalance,
+      <if test="remark != null" >
+        remark
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    	#{bbillid},
+    	#{buserid},
+    	#{operatesn},
+    	#{operatetime},
+    	#{operatemoney},
+    	#{billsflag},
+    	#{operatedesc},
+    	#{amountbalance},
+    	#{couponBalance},
+      <if test="remark != null" >
+        #{remark}
+      </if>
+      
+    </trim>
+  </insert>
+
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.order.IBaseOrderInfoDAO" >
+	
+	<resultMap id="BaseOrderInfoResultMap" type="com.accountmanage.pojo.order.BaseOrderInfo" >
+	    <id column="baseordersn" property="baseordersn" jdbcType="VARCHAR" />
+    	<result column="primeprice" property="primeprice" jdbcType="DECIMAL" />
+    	<result column="sellprice" property="sellprice" jdbcType="DECIMAL" /> 
+   		<result column="deliveryfee" property="deliveryfee" jdbcType="DECIMAL" />
+    	<result column="ordertime" property="ordertime"  />
+    	<result column="paytime" property="paytime" />
+    	<result column="paytype" property="paytype" jdbcType="CHAR" />
+    	<result column="receivetime" property="receivetime"/>
+    	<result column="deviceno" property="deviceno" jdbcType="VARCHAR" />
+    	<result column="remark" property="remark" jdbcType="VARCHAR" />
+    	<result column="distributionInterval" property="distributionInterval" jdbcType="VARCHAR" />
+   		<result column="orderstate" property="orderstate" jdbcType="CHAR" />
+   		<result column="ordertype" property="ordertype" jdbcType="CHAR" />
+   		
+   		<result column="receivename" property="receivename" jdbcType="VARCHAR" />
+   		<result column="receivephone" property="receivephone" jdbcType="VARCHAR" />
+   		<result column="receiveprovince" property="receiveprovince" jdbcType="VARCHAR" />
+   		<result column="receivecity" property="receivecity" jdbcType="VARCHAR" />
+   		<result column="receivedistrict" property="receivedistrict" jdbcType="VARCHAR" />
+   		<result column="receiveaddress" property="receiveaddress" jdbcType="VARCHAR" />
+   		
+   		<association column="userid" property="userInfo" resultMap="UserInfoResultMap"/>
+   		<association column="buserid" property="businessUser" resultMap="BusinessUserInfoResultMap"/>
+   	</resultMap>
+   	
+   	<resultMap id="UserInfoResultMap" type="com.accountmanage.pojo.bills.UserInfo" >
+  	    <id column="userId" property="userId" jdbcType="VARCHAR" />
+	    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  	</resultMap>
+   	
+   	<resultMap id="BusinessUserInfoResultMap" type="com.accountmanage.pojo.bills.BusinessUserInfo" >
+  	    <id column="buserId" property="buserId" jdbcType="VARCHAR" />
+	    <result column="buserName" property="buserName" jdbcType="VARCHAR" />
+  	</resultMap>
+   	
+   	
+   <sql id="Base_Column_List" >
+        o.baseordersn,o.userid as userId, o.buserid, o.primeprice, o.sellprice, 
+	    o.deliveryfee, o.ordertime, 
+	    o.paytime,o.paytype, o.receivetime, o.deviceno,
+	    o.remark, o.orderstate,o.ordertype,
+	    o.receivename, o.receivephone, o.receiveprovince, o.receivecity, o.receivedistrict,
+	    o.receiveaddress
+   </sql>
+   	
+    <select id="getPageBaseOrderList" parameterType="java.util.Map" resultMap="BaseOrderInfoResultMap">
+         SELECT 
+         	<include refid="Base_Column_List" />
+          FROM baseorderinfo o WHERE o.userid=#{userid} order by o.ordertime desc
+    </select>	
+    
+    <select id="getByBaseOrderSn" parameterType="java.lang.String" resultMap="BaseOrderInfoResultMap">
+         SELECT 
+         	<include refid="Base_Column_List" />,b.buserid as buserId 
+          FROM baseorderinfo o 
+          INNER JOIN BusinessUserInfo b on o.buserid = b.buserid
+          WHERE o.baseordersn=#{0}
+    </select>	
+    
+   	<update id="update" parameterType="com.accountmanage.pojo.order.BaseOrderInfo">
+           UPDATE baseorderinfo SET 
+              <if test='orderstate != null and orderstate != ""'>
+                  orderstate=#{orderstate},
+              </if>
+               <if test='paytime != null and paytime != ""'>
+                  paytime=#{paytime}
+              </if>
+              WHERE baseordersn=#{baseordersn}
+    
+    </update>
+   	
+</mapper>

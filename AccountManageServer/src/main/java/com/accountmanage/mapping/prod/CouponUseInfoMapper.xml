@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.prod.ICouponUseInfoDAO" >
+	
+	<resultMap id="ConponUseInfoResultMap" type="com.accountmanage.pojo.prod.CouponUseInfo" >
+		    <id column="cuid" property="cuid" jdbcType="VARCHAR" />
+    		<result column="ordersn" property="ordersn" jdbcType="VARCHAR" />
+    		<result column="couponAmount" property="couponAmount" jdbcType="INTEGER" />
+    		<result column="state" property="state" jdbcType="CHAR" />
+    		<association column="userid" property="userInfo" resultMap="UserInfoResultMap"/>
+    		<association column="couponid" property="couponRuleInfo" resultMap="CouponRuleInfoResultMap"/>
+  	</resultMap>
+  	
+    <update id="update" parameterType="com.accountmanage.pojo.prod.CouponUseInfo">
+  	    UPDATE CouponUseInfo SET state=#{state}
+  	       WHERE ordersn=#{ordersn} and userid=#{userInfo.userId} and state='2'
+  	</update>
+  
+  	
+  	
+  	
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.accountmanage.dao.system.IyxjSystemSmsConfigDAO" >
+
+    <resultMap id="smsconfigResultMap" type="com.accountmanage.pojo.system.yxj_system_sms_config" >
+	    <id column="config_id" property="configId" jdbcType="VARCHAR" />
+    	<result column="point_name" property="pointName" jdbcType="VARCHAR" />
+    	<result column="point_code" property="pointCode" jdbcType="VARCHAR" />
+    	<result column="active_state" property="activeState" jdbcType="VARCHAR" />
+    	<association property="smsChannel" column="channel_id" resultMap="smschannelResultMap"></association> 
+  	</resultMap>
+  	
+  	 <resultMap id="smschannelResultMap" type="com.accountmanage.pojo.system.Yxj_system_sms_channel" >
+	       <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    	<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+	 </resultMap>  
+	 
+	 <sql id="Base_Column_List" >
+         cf.config_id,cf.point_name,cf.point_code,cf.active_state
+	 </sql>
+   
+   <select id="getSysSmsConfigByPointCode" parameterType="java.lang.String" resultMap="smsconfigResultMap">
+         select  
+            <include refid="Base_Column_List"></include>,ch.channel_id,ch.channel_code  
+            from yxj_system_sms_config cf   
+            join yxj_system_sms_channel ch   
+            on cf.channel_id = ch.channel_id  
+          where  
+          	cf.point_code = #{0} and cf.active_state = '1'
+   </select>
+   
+</mapper>

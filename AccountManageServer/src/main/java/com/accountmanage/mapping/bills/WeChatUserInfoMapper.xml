@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.bills.IWeChatUserInfoDAO" >
+	
+	<resultMap id="WeChatUserInfoResultMap" type="com.accountmanage.pojo.bills.WeChatUserInfo" >
+	    <id column="wetchid" property="wetchid" jdbcType="VARCHAR" />
+    	<result column="openid" property="openid" jdbcType="VARCHAR" />
+    	<result column="userid" property="userid" jdbcType="VARCHAR" />
+    	<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+   		<result column="sex" property="sex" jdbcType="INTEGER" />
+   		<result column="city" property="city" jdbcType="VARCHAR" />
+   		<result column="country" property="country" jdbcType="VARCHAR" />
+   		<result column="province" property="province" jdbcType="VARCHAR" />
+    	<result column="language" property="language" jdbcType="VARCHAR" />
+   		<result column="headimgurl" property="headimgurl" jdbcType="VARCHAR" />
+    	<result column="subscribetime" property="subscribetime" jdbcType="TIMESTAMP" />
+    	<result column="isbunding" property="isbunding" jdbcType="CHAR" />
+    	<result column="isunsubscribe" property="isunsubscribe" jdbcType="CHAR" />
+    	<result column="unsubscribetime" property="unsubscribetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  	
+  	
+
+</mapper>

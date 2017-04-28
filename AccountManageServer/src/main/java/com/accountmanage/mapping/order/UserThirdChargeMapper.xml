@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.order.IUserThirdChargeDAO" >
+	
+   <select id="getUserThirdChargeByOrderSn" parameterType="java.lang.String" resultType="com.accountmanage.pojo.order.UserThirdCharge">
+         SELECT 
+        *
+          FROM UserThirdCharge c WHERE c.chargesn=#{0}
+    </select>	
+   	<update id="update" parameterType="com.accountmanage.pojo.order.UserThirdCharge">
+           UPDATE UserThirdCharge
+             <set>
+              <if test='cpordersn != null and cpordersn != ""'>
+                  cpordersn=#{cpordersn},
+              </if>
+              <if test='chargetime != null and chargetime != ""'>
+                  chargetime=#{chargetime},
+              </if>
+              <if test='state != null and state != ""'>
+                  state=#{state},
+              </if>
+             </set>
+              WHERE chargesn=#{chargesn}
+    
+    </update>
+   	
+</mapper>

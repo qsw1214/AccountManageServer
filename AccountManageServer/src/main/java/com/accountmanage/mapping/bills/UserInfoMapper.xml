@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.bills.IUserInfoDAO" >
+	
+	<resultMap id="UserInfoResultMap" type="com.accountmanage.pojo.bills.UserInfo" >
+    	<id column="userId" property="userId" jdbcType="VARCHAR" />
+    	<result column="userName" property="userName" jdbcType="VARCHAR" />
+   		 <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+   		 <result column="loginpass" property="loginPass" jdbcType="VARCHAR" />
+   		 <result column="paypass" property="payPass" jdbcType="VARCHAR" />
+    	<result column="isMember" property="isMember" jdbcType="CHAR" />
+   		<result column="amount" property="amount" jdbcType="DECIMAL" />
+    	<result column="state" property="state" jdbcType="CHAR" />
+    	<result column="remark" property="remark" jdbcType="VARCHAR" />
+    	<result column="isfreshman" property="isfreshman" jdbcType="CHAR" />
+    	<result column="isOnecent" property="isOnecent" jdbcType="CHAR" />
+    	<result column="memrebate" property="memRebate" jdbcType="DECIMAL" />
+    	<result column="createTime" property="createTime" jdbcType="DATE" />
+    	<result column="deviceNo" property="deviceNo" jdbcType="VARCHAR" />
+    	
+  	</resultMap>
+  
+	<sql id="user_Column_List" >
+    	userId, userName, telephone, isMember,state, amount, deviceNo,isfreshman,isOnecent
+  	</sql>
+  	<select id="getAmountById" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+  		select 
+   		amount
+   		from userInfo
+  			  where userId=#{userId} 
+  	</select>
+
+  <select id="getById" resultMap="UserInfoResultMap" parameterType="java.lang.String" >
+    	select 
+   		<include refid="user_Column_List" />
+   		from userInfo
+  			  where userId=#{userId} 
+  </select>
+   	
+   	<update id="updateUser" parameterType="com.accountmanage.pojo.bills.UserInfo" >
+	    UPDATE userInfo
+	    <set>
+	       <if test='amount != null'>
+	               amount=#{amount},
+	       </if>
+	       <if test='isMember != null and isMember != ""'>
+	               isMember=#{isMember},
+	       </if>
+	       <if test='isOnecent != null and isOnecent != ""' >
+	            isOnecent = #{isOnecent},
+	       </if>
+	       <if test='isfreshman != null and isfreshman != ""' >
+	            isfreshman = #{isfreshman},
+	       </if>
+	    </set>
+	    WHERE userId=#{userId} 
+  	</update>
+  	
+  	
+</mapper>

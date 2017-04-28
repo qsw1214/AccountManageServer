@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.prod.ICouponRuleInfoDAO" >
+	
+	<resultMap id="CouponRuleInfoResultMap" type="com.accountmanage.pojo.prod.CouponRuleInfo" >
+		    <id column="couponId" property="couponId" jdbcType="VARCHAR" />
+    		<result column="couponName" property="couponName" jdbcType="VARCHAR" />
+    		<result column="couponMoney" property="couponMoney" jdbcType="INTEGER" />
+    		<result column="sinceMoney" property="sinceMoney" jdbcType="INTEGER" />
+    		<result column="createTime" property="createTime" jdbcType="DATE" />
+    		<result column="beginTime" property="beginTime" jdbcType="DATE" />
+    		<result column="endTime" property="endTime" jdbcType="DATE" />
+    		<result column="state" property="state" jdbcType="CHAR" />
+    		<result column="prodTypeId" property="prodTypeId" jdbcType="VARCHAR" />
+    		<result column="couponDesc" property="couponDesc" jdbcType="VARCHAR" />
+    		<result column="timeLength" property="timeLength" jdbcType="VARCHAR" />
+    		<result column="adid" property="adid" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+
+  	
+  	
+  	
+
+</mapper>

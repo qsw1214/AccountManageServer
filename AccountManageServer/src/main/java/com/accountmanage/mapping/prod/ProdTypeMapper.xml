@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.prod.IProdTypeDAO" >
+	
+	<resultMap id="ProdInfoResultMap" type="com.accountmanage.pojo.prod.ProdType" >
+    	<id column="typeid" property="typeid" jdbcType="VARCHAR" />
+    	<result column="buserid" property="buserid" jdbcType="VARCHAR" />
+    	<result column="typename" property="typename" jdbcType="VARCHAR" />
+   		<result column="depth" property="depth" jdbcType="INTEGER" />
+    	<result column="parentid" property="parentid" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+  	<sql id="Base_Column_List" >
+          p.typeid,p.typename,p.depth,p.parentid
+	</sql>
+	 
+  	<select id="getProdTypeList" resultMap="ProdInfoResultMap" parameterType="java.lang.String">
+	  	SELECT
+			<include refid="Base_Column_List"></include>
+		FROM
+			ProdType p 
+		<if test='level!=null and level!=""'>
+	    	where p.parentid=#{0}
+		</if>	
+		
+	 </select>
+	 
+	 
+  	
+  	
+</mapper>

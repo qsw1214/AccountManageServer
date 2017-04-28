@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.bills.IUserBillsDAO" >
+	
+	<resultMap id="UserBillsResultMap" type="com.accountmanage.pojo.bills.UserBills" >
+   		 <id column="billid" property="billid" jdbcType="VARCHAR" />
+   		 <result column="userid" property="userid" jdbcType="VARCHAR" />
+   		 <result column="operatesn" property="operatesn" jdbcType="VARCHAR" />
+   		 <result column="operatetime" property="operatetime" jdbcType="DATE" />
+   		 <result column="amountbalance" property="amountbalance" jdbcType="DECIMAL" />
+   		 <result column="operatemoney" property="operatemoney" jdbcType="DECIMAL" />
+   		 <result column="billsflag" property="billsflag" jdbcType="CHAR" />
+   		 <result column="operatedesc" property="operatedesc" jdbcType="VARCHAR" />
+   		 <result column="remark" property="remark" jdbcType="VARCHAR" />
+   		
+  	</resultMap>
+  	
+  	<sql id="Base_Column_List" >
+    	ub.billid,ub.userid,ub.operatesn,ub.operatetime,ub.amountbalance,ub.operatemoney,ub.billsflag,ub.operatedesc,ub.remark
+  	</sql>
+  	
+  	<select id="validateRepeatBill" parameterType="java.lang.String" resultType="java.lang.String">
+         SELECT 
+         	ub.billid
+          FROM userBills ub WHERE ub.userid=#{0} and ub.operatesn = #{1} and ub.billsflag = #{2}
+    </select>
+    
+    <insert id="insertUserBills" parameterType="com.accountmanage.pojo.bills.UserBills" >
+    insert into userBills
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    	billid,
+    	userid,
+    	operatesn,
+    	operatetime,
+    	amountbalance,
+    	operatemoney,
+    	billsflag,
+    	operatedesc,
+      <if test="remark != null" >
+        remark
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    	#{billid},
+    	#{userid},
+    	#{operatesn},
+    	#{operatetime},
+    	#{amountbalance},
+    	#{operatemoney},
+    	#{billsflag},
+    	#{operatedesc},
+      <if test="remark != null" >
+        #{remark}
+      </if>
+      
+    </trim>
+  </insert>
+
+</mapper>

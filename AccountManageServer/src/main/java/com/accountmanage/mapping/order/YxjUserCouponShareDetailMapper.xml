@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.accountmanage.dao.order.IYxjUserCouponShareDetailDAO" >
+  <resultMap id="BaseResultMap" type="com.accountmanage.pojo.order.YxjUserCouponShareDetail" >
+    <id column="share_detail_id" property="detailId" jdbcType="VARCHAR" />
+    <result column="share_id" property="shareId" jdbcType="VARCHAR" />
+    <result column="coupon_id" property="couponId" jdbcType="VARCHAR" />
+    <result column="coupon_name" property="couponName" jdbcType="VARCHAR" />
+    <result column="coupon_title" property="couponTitle" jdbcType="VARCHAR" />
+    <result column="coupon_amount" property="couponAmount" jdbcType="DECIMAL" />
+    <result column="coupon_desc" property="couponDesc" jdbcType="VARCHAR" />
+    <result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP" />
+    <result column="since_money" property="sinceMoney" jdbcType="DECIMAL" />
+    <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <association property="receiveUser" column="receive_user_id" resultMap="receiveUserMap"></association> 
+  </resultMap>
+  
+  <resultMap id="receiveUserMap" type="com.accountmanage.pojo.bills.UserInfo" >
+	   <id column="userId" property="userId" jdbcType="VARCHAR" />
+	   <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+   </resultMap> 
+   
+  <sql id="Base_Pojo_Column_List" >
+  	shareDetail.share_detail_id as detailId, shareDetail.share_id as shareId, shareDetail.coupon_id as couponId, 
+  	shareDetail.coupon_name as couponName, shareDetail.coupon_amount as couponAmount, shareDetail.coupon_desc as couponDesc, shareDetail.receive_time as receiveTime, 
+  	shareDetail.begin_time as beginTime, shareDetail.end_time as endTime, shareDetail.coupon_title as couponTitle, shareDetail.since_money as sinceMoney
+  </sql>
+  
+  <sql id="Base_Map_Column_List" >
+  	shareDetail.share_detail_id, shareDetail.share_id, u.userId,u.telephone, shareDetail.coupon_id, 
+  	shareDetail.coupon_name, shareDetail.coupon_amount, shareDetail.coupon_desc, shareDetail.receive_time, 
+  	shareDetail.begin_time, shareDetail.end_time, shareDetail.coupon_title, shareDetail.since_money
+  </sql>
+  <select id="findCouponShareDetailByShareId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Map_Column_List"></include>
+    from yxj_user_coupon_share_detail shareDetail inner join userInfo u on shareDetail.receive_user_id = u.userId 
+    where shareDetail.share_id=#{0} and shareDetail.receive_user_id is not null 
+    order by receive_time desc
+  </select>
+  
+  <select id="validateIsReceivedByShareId" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    	share_id
+    from yxj_user_coupon_share_detail
+    where share_id=#{0} and receive_user_id = #{1}
+  </select>
+  
+  <select id="getOneShareDetailByShareId" resultType="com.accountmanage.pojo.order.YxjUserCouponShareDetail" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Pojo_Column_List"></include>
+    from yxj_user_coupon_share_detail shareDetail,yxj_user_coupon_share shareCoupon
+    where shareDetail.share_id = shareCoupon.share_id 
+    and shareDetail.share_id=#{0} 
+    and shareDetail.receive_user_id is null 
+    and shareCoupon.begintime <![CDATA[<=]]> date_format(now(),'%y-%m-%d')
+    and shareCoupon.endtime <![CDATA[>=]]> date_format(now(),'%y-%m-%d') 
+    order by rand() limit 1 
+  </select>
+  
+  <insert id="insert"  parameterType="com.accountmanage.pojo.order.YxjUserCouponShareDetail">
+	  insert yxj_user_coupon_share_detail(share_detail_id,share_id,coupon_id,coupon_title
+	  ,coupon_amount,coupon_desc,coupon_name,since_money,begin_time,end_time)
+	        values(#{detailId},#{shareId},#{couponId},#{couponTitle}
+	        ,#{couponAmount},#{couponDesc},#{couponName},#{sinceMoney},#{beginTime},#{endTime})
+  </insert>
+  
+  <update id="update" parameterType="com.accountmanage.pojo.order.YxjUserCouponShareDetail" >
+    update yxj_user_coupon_share_detail
+    set receive_user_id = #{receiveUser.userId,jdbcType=VARCHAR},
+      receive_time = #{receiveTime}
+    where share_detail_id = #{detailId,jdbcType=VARCHAR}
+  </update>
+</mapper>
